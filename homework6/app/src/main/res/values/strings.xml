@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Homework5</string>
+
+    <string name="tab_start">Start</string>
+    <string name="tab_progress">Progress</string>
+    <string name="tab_result">Result</string>
+
+    <string name="btn_start">Start</string>
+    <string name="btn_cancel">Cancel</string>
+
+    <string name="result_placeholder">結果將顯示於此</string>
+</resources>
