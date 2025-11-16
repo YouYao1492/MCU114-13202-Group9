@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <Button
+        android:id="@+id/btnDrive"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
+        android:text="開車"
+        app:layout_constraintEnd_toStartOf="@+id/btnWalk"
+        tools:layout_editor_absoluteY="629dp"></Button>
+
+    <Button
+        android:id="@+id/btnWalk"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
+        android:text="走路"
+        tools:layout_editor_absoluteX="140dp"
+        tools:layout_editor_absoluteY="629dp"></Button>
+
+    <Button
+        android:id="@+id/btnBike"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
+        android:text="單車"
+        app:layout_constraintStart_toEndOf="@+id/btnWalk"
+        tools:layout_editor_absoluteY="629dp"></Button>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
