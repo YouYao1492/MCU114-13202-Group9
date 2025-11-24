@@ -7,8 +7,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,7 +18,7 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
-    // Gson 解析用資料類別
+    // Data Classes for Gson Parsing
     data class WeatherResponse(val main: MainData, val name: String)
     data class MainData(val temp: Double, val humidity: Int)
 
@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -33,55 +34,66 @@ class MainActivity : AppCompatActivity() {
         }
 
         val btnGetTemp = findViewById<Button>(R.id.btnGetTemp)
-        btnGetTemp.setOnClickListener {
-            fetchWeatherForAllCities()
-        }
-    }
 
-    private fun fetchWeatherForAllCities() {
+        // 原本的 cities 名稱保持不變
         val cities = listOf(
             "New Taipei", "Taipei", "Taoyuan", "Hsinchu", "Miaoli",
             "Taichung", "Changhua", "Nantou", "Yunlin", "Chiayi",
             "Tainan", "Kaohsiung", "Pingtung", "Yilan", "Hualien",
-            "Taitung", "Keelung", "Penghu", "Kinmen", "Lienchiang"
+            "Taitung", "Keelung", "Penghu", "Jingmen", "Lianjiang"
         )
 
+        // 按下按鈕 → 跳出城市選單
+        btnGetTemp.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Select a City")
+                .setItems(cities.toTypedArray()) { _, which ->
+                    val selectedCity = cities[which]
+                    fetchWeather(selectedCity)
+                }
+                .show()
+        }
+    }
+
+    // 單一城市查詢 API
+    private fun fetchWeather(cityName: String) {
         val apiKey = "28edde27cdedb0ee42c71569d1689492"
         val client = OkHttpClient()
 
-        // 使用 lifecycleScope 啟動協程
-        lifecycleScope.launch(Dispatchers.IO) {
-            val results = mutableListOf<String>()
+        CoroutineScope(Dispatchers.IO).launch {
+            val url =
+                "https://api.openweathermap.org/data/2.5/weather?q=$cityName&units=metric&appid=$apiKey"
 
-            for (city in cities) {
-                try {
-                    val url = "https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$apiKey"
-                    val request = Request.Builder().url(url).build()
-                    val response = client.newCall(request).execute()
+            try {
+                val request = Request.Builder().url(url).build()
+                val response = client.newCall(request).execute()
 
-                    if (response.isSuccessful) {
-                        val responseData = response.body?.string()
-                        if (responseData != null) {
-                            val weatherData = Gson().fromJson(responseData, WeatherResponse::class.java)
-                            results.add("${weatherData.name}: ${weatherData.main.temp}°C, ${weatherData.main.humidity}%")
-                        } else {
-                            results.add("$city: No data")
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (body != null) {
+                        val weatherData = Gson().fromJson(body, WeatherResponse::class.java)
+
+                        val result =
+                            "${weatherData.name}\nTemperature: ${weatherData.main.temp}°C\nHumidity: ${weatherData.main.humidity}%"
+
+                        withContext(Dispatchers.Main) {
+                            showAlertDialog("Weather Info", result)
                         }
-                    } else {
-                        results.add("$city: Failed (Code ${response.code})")
                     }
-                } catch (e: IOException) {
-                    results.add("$city: Network error")
+                } else {
+                    withContext(Dispatchers.Main) {
+                        showAlertDialog("Error", "Failed (code ${response.code})")
+                    }
                 }
-            }
-
-            // 回到主線程更新 UI
-            withContext(Dispatchers.Main) {
-                showAlertDialog("Taiwan Major City Weather", results.joinToString("\n"))
+            } catch (e: IOException) {
+                withContext(Dispatchers.Main) {
+                    showAlertDialog("Error", "Network error")
+                }
             }
         }
     }
 
+    // 顯示結果
     private fun showAlertDialog(title: String, message: String) {
         AlertDialog.Builder(this)
             .setTitle(title)
