@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/white"
+    android:elevation="8dp">
+
+    <ImageButton
+        android:id="@+id/homeBtn"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:contentDescription="back to home"
+        android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/ic_home"/>
+
+    <ImageButton
+        android:id="@+id/addBtn"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:contentDescription="add post"
+        android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/ic_add" />
+
+    <ImageButton
+        android:id="@+id/messageBtn"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:contentDescription="check message"
+        android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/ic_message"/>
+
+    <ImageButton
+        android:id="@+id/profileBtn"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:contentDescription="see profile"
+        android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/ic_profile"/>
+</LinearLayout>

@@ -55,17 +55,34 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/imageComment"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:backgroundTint="@color/black"
-            android:src="@drawable/ic_like"/>
-
-        <ImageView
             android:id="@+id/imageLike"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:src="@drawable/ic_like"/>
+
+        <TextView
+            android:id="@+id/likeCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="6dp"
+            android:text="0"/>
+
+        <ImageView
+            android:id="@+id/imageComment"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp"
             android:src="@drawable/ic_message"/>
+
+        <TextView
+            android:id="@+id/commentCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="6dp"
+            android:text="0"/>
+
     </LinearLayout>
 
     <TextView
