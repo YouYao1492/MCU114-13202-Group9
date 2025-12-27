@@ -17,11 +17,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.util.Date
 
 class CommentActivity : AppCompatActivity() {
 
     private lateinit var commentRecyclerView: RecyclerView
     private lateinit var commentAdapter: CommentAdapter
+    private lateinit var commentEditText: EditText
     private var postId: String? = null
     private var parentComment: Comment? = null
 
@@ -42,14 +44,14 @@ class CommentActivity : AppCompatActivity() {
         replyInfoTextView = findViewById(R.id.activity_comment_textview_reply_info)
 
         commentRecyclerView = findViewById(R.id.activity_comment_recyclerview_comments)
-        commentRecyclerView.layoutManager = LinearLayoutManager(this)
-        commentAdapter = CommentAdapter { comment -> replyToComment(comment) }
-        commentRecyclerView.adapter = commentAdapter
-
-        val commentEditText = findViewById<EditText>(R.id.activity_comment_edittext_comment)
+        commentEditText = findViewById(R.id.activity_comment_edittext_comment)
         val sendButton = findViewById<Button>(R.id.activity_comment_button_send)
         val cancelReplyButton = findViewById<Button>(R.id.activity_comment_button_cancel_reply)
         val backButton = findViewById<ImageButton>(R.id.activity_comment_imagebutton_back)
+
+        commentAdapter = CommentAdapter { comment -> replyToComment(comment) }
+        commentRecyclerView.layoutManager = LinearLayoutManager(this)
+        commentRecyclerView.adapter = commentAdapter
 
         sendButton.setOnClickListener {
             val commentText = commentEditText.text.toString()
@@ -106,37 +108,63 @@ class CommentActivity : AppCompatActivity() {
     private fun addComment(commentText: String) {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null || postId == null) {
-            Toast.makeText(this, "必須登錄才能留言", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "You must be logged in to comment.", Toast.LENGTH_SHORT).show()
             return
         }
 
         val db = FirebaseFirestore.getInstance()
+        val newCommentRef = db.collection("comments").document()
 
         val level = parentComment?.level?.plus(1) ?: 0
         val parentId = parentComment?.id
 
-        val comment = Comment(
+        val newComment = Comment(
+            id = newCommentRef.id,
             postId = postId!!,
             userId = currentUser.uid,
             username = currentUser.displayName ?: "",
             photoUrl = currentUser.photoUrl.toString(),
             text = commentText,
             level = level,
-            parentId = parentId
+            parentId = parentId,
+            timestamp = Date()
         )
 
-        db.collection("comments").add(comment)
+        // Optimistic UI update
+        val currentComments = commentAdapter.currentList.toMutableList()
+        if (newComment.parentId == null) {
+            currentComments.add(newComment)
+        } else {
+            val parentIndex = currentComments.indexOfFirst { it.id == newComment.parentId }
+            if (parentIndex != -1) {
+                var insertionIndex = parentIndex
+                for (i in (parentIndex + 1) until currentComments.size) {
+                    if (currentComments[i].level > currentComments[parentIndex].level) {
+                        insertionIndex = i
+                    } else {
+                        break
+                    }
+                }
+                currentComments.add(insertionIndex + 1, newComment)
+            } else {
+                currentComments.add(newComment) // Fallback
+            }
+        }
+        commentAdapter.submitList(currentComments)
+        commentRecyclerView.scrollToPosition(currentComments.size - 1)
+        commentEditText.text.clear()
+        cancelReply()
+
+        // Send to Firestore in the background
+        newCommentRef.set(newComment)
             .addOnSuccessListener {
                 db.collection("posts").document(postId!!)
                     .update("commentCount", FieldValue.increment(1))
                 createCommentNotification(postId!!, commentText)
-                
-                // Refresh the activity to show the new comment instantly
-                finish()
-                startActivity(intent)
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "留言失敗: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("CommentActivity", "Failed to add comment to database.", e)
+                Toast.makeText(this, "Error: Could not save comment.", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -154,7 +182,7 @@ class CommentActivity : AppCompatActivity() {
                     triggerUserPhotoUrl = currentUser.photoUrl.toString(),
                     type = "comment",
                     postId = postId,
-                    text = "對你的貼文留言: $commentText"
+                    text = "commented on your post: $commentText"
                 )
                 db.collection("notifications").add(notification)
             }
@@ -165,7 +193,7 @@ class CommentActivity : AppCompatActivity() {
         parentComment = comment
         replyInfoTextView.text = "Replying to ${comment.username}"
         replyInfoLayout.visibility = View.VISIBLE
-        findViewById<EditText>(R.id.activity_comment_edittext_comment).requestFocus()
+        commentEditText.requestFocus()
     }
 
     private fun cancelReply() {

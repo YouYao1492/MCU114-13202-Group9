@@ -96,6 +96,7 @@ class MyAdapter(
                 }
             }
 
+            // This sets up the click listener for the comment icon
             commentButton.setOnClickListener {
                 val intent = Intent(itemView.context, CommentActivity::class.java)
                 intent.putExtra("POST_ID", post.id)
@@ -111,15 +112,19 @@ class MyAdapter(
 
         fun bind(notification: Notification) {
             notificationTextView.text = when (notification.type) {
-                "message" -> "${notification.triggerUsername} 向你發送了訊息: ${notification.text}"
+                "message" -> "${notification.triggerUsername}: ${notification.text}"
                 else -> "${notification.triggerUsername} ${notification.text}"
             }
             timestampTextView.text = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(notification.timestamp)
 
-            Glide.with(itemView.context)
-                .load(notification.triggerUserPhotoUrl)
-                .placeholder(R.drawable.ic_profile)
-                .into(profileImageView)
+            if (notification.triggerUserPhotoUrl.isNotEmpty()) {
+                Glide.with(itemView.context)
+                    .load(notification.triggerUserPhotoUrl)
+                    .placeholder(R.drawable.ic_profile)
+                    .into(profileImageView)
+            } else {
+                profileImageView.setImageResource(R.drawable.ic_profile)
+            }
 
             if (notification.type == "message") {
                 itemView.setOnClickListener {
