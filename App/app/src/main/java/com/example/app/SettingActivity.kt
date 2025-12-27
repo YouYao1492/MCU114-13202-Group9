@@ -19,7 +19,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.auth.FirebaseAuth
@@ -46,10 +45,6 @@ class SettingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)
         overridePendingTransition(R.anim.fade_in, 0)
-
-        val toolbar = findViewById<Toolbar>(R.id.activity_setting_toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         profilePicPreview = findViewById(R.id.activity_setting_imageview_profile_preview)
         networkStatusTextView = findViewById(R.id.activity_setting_textview_network_status)
@@ -156,42 +151,39 @@ class SettingActivity : AppCompatActivity() {
 
     private fun updateProfilePicture(uri: Uri) {
         val randomImageUrl = "https://picsum.photos/seed/${UUID.randomUUID()}/200/200"
-
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser == null) {
-            Toast.makeText(this, "You must be logged in to change your profile picture.", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
 
         val profileUpdates = UserProfileChangeRequest.Builder()
             .setPhotoUri(Uri.parse(randomImageUrl))
             .build()
 
-        currentUser.updateProfile(profileUpdates)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    updateUserPosts(randomImageUrl)
-                }
+        currentUser.updateProfile(profileUpdates).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                updateUserRelatedData(randomImageUrl)
             }
+        }
     }
 
-    private fun updateUserPosts(newProfilePicUrl: String) {
+    private fun updateUserRelatedData(newPhotoUrl: String) {
         val db = FirebaseFirestore.getInstance()
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser != null) {
-            db.collection("posts")
-                .whereEqualTo("userId", currentUser.uid)
-                .get()
-                .addOnSuccessListener { documents ->
-                    val batch = db.batch()
-                    for (document in documents) {
-                        batch.update(document.reference, "photoUrl", newProfilePicUrl)
-                    }
-                    batch.commit()
-                        .addOnSuccessListener {
-                            Toast.makeText(this, "Profile picture updated successfully!", Toast.LENGTH_SHORT).show()
-                        }
+        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
+
+        // Update the user's document in the 'users' collection
+        val userRef = db.collection("users").document(currentUser.uid)
+        userRef.update("photoUrl", newPhotoUrl)
+
+        // Update the user's posts in the 'posts' collection
+        db.collection("posts")
+            .whereEqualTo("userId", currentUser.uid)
+            .get()
+            .addOnSuccessListener { documents ->
+                val batch = db.batch()
+                for (document in documents) {
+                    batch.update(document.reference, "photoUrl", newPhotoUrl)
                 }
-        }
+                batch.commit().addOnSuccessListener {
+                    Toast.makeText(this, "成功更新頭像", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 }

@@ -110,13 +110,24 @@ class MyAdapter(
         private val profileImageView: ImageView = itemView.findViewById(R.id.triggerUserProfilePic)
 
         fun bind(notification: Notification) {
-            notificationTextView.text = "${notification.triggerUsername} ${notification.text}"
+            notificationTextView.text = when (notification.type) {
+                "message" -> "${notification.triggerUsername} 向你發送了訊息: ${notification.text}"
+                else -> "${notification.triggerUsername} ${notification.text}"
+            }
             timestampTextView.text = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(notification.timestamp)
 
             Glide.with(itemView.context)
                 .load(notification.triggerUserPhotoUrl)
                 .placeholder(R.drawable.ic_profile)
                 .into(profileImageView)
+
+            if (notification.type == "message") {
+                itemView.setOnClickListener {
+                    val intent = Intent(itemView.context, ChatActivity::class.java)
+                    intent.putExtra("USER_ID", notification.triggerUserId)
+                    itemView.context.startActivity(intent)
+                }
+            }
         }
     }
 }

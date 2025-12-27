@@ -44,7 +44,7 @@ class PostActivity : AppCompatActivity() {
             if (isGranted) {
                 launchCamera()
             } else {
-                Toast.makeText(this, "Camera permission is required to take pictures.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "需要攝像機權限來拍照", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -84,7 +84,7 @@ class PostActivity : AppCompatActivity() {
             val currentUser = FirebaseAuth.getInstance().currentUser
 
             if (currentUser == null) {
-                Toast.makeText(this, "You must be logged in to post.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "你必須登錄才能發佈", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -92,7 +92,7 @@ class PostActivity : AppCompatActivity() {
                 val randomImageUrl = "https://picsum.photos/seed/${UUID.randomUUID()}/800/600"
                 createPost(randomImageUrl, caption)
             } else {
-                Toast.makeText(this, "Please select an image and write a caption.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "請選擇一張圖片和輸入內容", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -126,11 +126,11 @@ class PostActivity : AppCompatActivity() {
 
         db.collection("posts").add(post)
             .addOnSuccessListener {
-                Toast.makeText(this, "Post created successfully!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "成功發佈", Toast.LENGTH_SHORT).show()
                 finish()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Failed to create post: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "發佈失敗: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 }

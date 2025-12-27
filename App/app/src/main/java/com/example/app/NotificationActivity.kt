@@ -80,7 +80,7 @@ class NotificationActivity : BaseActivity() {
                 }
                 batch.commit()
                     .addOnSuccessListener {
-                        Toast.makeText(this, "All notifications cleared.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "已清除全部訊息", Toast.LENGTH_SHORT).show()
                         // Manually clear the adapter for immediate UI update
                         myAdapter.submitList(emptyList())
                     }

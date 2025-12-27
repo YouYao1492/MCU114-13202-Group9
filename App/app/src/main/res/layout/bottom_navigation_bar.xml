@@ -32,7 +32,7 @@
         android:layout_weight="1"
         android:contentDescription="check message"
         android:backgroundTint="@android:color/transparent"
-        android:src="@drawable/ic_message"/>
+        android:src="@drawable/ic_bell"/>
 
     <ImageButton
         android:id="@+id/profileBtn"

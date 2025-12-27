@@ -2,86 +2,58 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_comment_root"
+    android:id="@+id/activity_chat_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CommentActivity">
+    tools:context=".ChatActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/activity_comment_appbarlayout"
+        android:id="@+id/activity_chat_appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/Theme.App.AppBarOverlay"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/activity_comment_toolbar"
+            android:id="@+id/activity_chat_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/Theme.App.PopupOverlay">
 
             <ImageButton
-                android:id="@+id/activity_comment_imagebutton_back"
+                android:id="@+id/activity_chat_imagebutton_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Back"
-                android:padding="16dp"
                 android:src="@drawable/ic_back" />
 
             <TextView
-                android:id="@+id/activity_comment_textview_title"
+                android:id="@+id/activity_chat_textview_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="留言"
+                android:layout_marginStart="30dp"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="Username" />
 
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/activity_comment_recyclerview_comments"
+        android:id="@+id/activity_chat_recyclerview_messages"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/activity_comment_appbarlayout"
-        app:layout_constraintBottom_toTopOf="@+id/activity_comment_linearlayout_reply_info"
+        app:layout_constraintTop_toBottomOf="@+id/activity_chat_appbarlayout"
+        app:layout_constraintBottom_toTopOf="@+id/activity_chat_linearlayout_input"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
-        android:id="@+id/activity_comment_linearlayout_reply_info"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/activity_comment_linearlayout_input"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:id="@+id/activity_comment_textview_reply_info"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            tools:text="Replying to username" />
-
-        <Button
-            android:id="@+id/activity_comment_button_cancel_reply"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancel"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/activity_comment_linearlayout_input"
+        android:id="@+id/activity_chat_linearlayout_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -90,14 +62,14 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <EditText
-            android:id="@+id/activity_comment_edittext_comment"
+            android:id="@+id/activity_chat_edittext_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Add a comment..." />
+            android:hint="Type a message..." />
 
         <Button
-            android:id="@+id/activity_comment_button_send"
+            android:id="@+id/activity_chat_button_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Send" />

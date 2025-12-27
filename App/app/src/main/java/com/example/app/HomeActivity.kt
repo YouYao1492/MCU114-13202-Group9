@@ -1,8 +1,10 @@
 package com.example.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +43,11 @@ class HomeActivity : BaseActivity() {
             }
         })
 
+        val messageButton = findViewById<ImageButton>(R.id.activity_home_imagebutton_message)
+        messageButton.setOnClickListener {
+            val intent = Intent(this, ConversationsActivity::class.java)
+            startActivity(intent)
+        }
 
         setupBottomNavigationBar()
 
@@ -60,7 +67,7 @@ class HomeActivity : BaseActivity() {
                 if (snapshots != null) {
                     val posts = snapshots.toObjects(Post::class.java)
                     allPosts = posts.map { FeedItem.PostItem(it) }
-                    filterPosts(findViewById<SearchView>(R.id.activity_home_searchview_search).query.toString())
+                    myAdapter.submitList(allPosts)
                 }
             }
     }
@@ -108,7 +115,7 @@ class HomeActivity : BaseActivity() {
             triggerUserPhotoUrl = currentUser.photoUrl.toString(),
             type = "like",
             postId = post.id,
-            text = "liked your post"
+            text = "贊了你的貼文"
         )
 
         db.collection("notifications").add(notification)

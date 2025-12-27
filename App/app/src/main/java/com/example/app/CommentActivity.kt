@@ -106,7 +106,7 @@ class CommentActivity : AppCompatActivity() {
     private fun addComment(commentText: String) {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null || postId == null) {
-            Toast.makeText(this, "You must be logged in to comment.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "必須登錄才能留言", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -136,7 +136,7 @@ class CommentActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Failed to add comment: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "留言失敗: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -154,7 +154,7 @@ class CommentActivity : AppCompatActivity() {
                     triggerUserPhotoUrl = currentUser.photoUrl.toString(),
                     type = "comment",
                     postId = postId,
-                    text = "commented on your post: $commentText"
+                    text = "對你的貼文留言: $commentText"
                 )
                 db.collection("notifications").add(notification)
             }

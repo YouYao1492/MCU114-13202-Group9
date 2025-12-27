@@ -3,13 +3,13 @@ package com.example.app
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Locale
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -45,31 +45,31 @@ class RegisterActivity : AppCompatActivity() {
 
                                 user?.updateProfile(profileUpdates)?.addOnCompleteListener { profileTask ->
                                     if (profileTask.isSuccessful) {
-//                                        createUserDocument(user.uid, email, name, "")
+                                        createUserDocument(user.uid, email, name, "")
                                     }
                                 }
                             } else {
-                                Toast.makeText(this, "Registration failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "注冊失敗: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                             }
                         }
                 } else {
-                    Toast.makeText(this, "Passwords do not match.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "密碼不相符", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "請填入所有資料", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-//    private fun createUserDocument(userId: String, email: String, username: String, photoUrl: String) {
-//        val db = FirebaseFirestore.getInstance()
-//        val user = User(uid = userId, email = email, username = username, searchableUsername = username.toLowerCase(), photoUrl = photoUrl)
-//        db.collection("users").document(userId).set(user)
-//            .addOnSuccessListener {
-//                Toast.makeText(this, "Registration successful.", Toast.LENGTH_SHORT).show()
-//                val intent = Intent(this, LoginActivity::class.java)
-//                startActivity(intent)
-//                finish()
-//            }
-//    }
+    private fun createUserDocument(userId: String, email: String, username: String, photoUrl: String) {
+        val db = FirebaseFirestore.getInstance()
+        val user = User(uid = userId, email = email, username = username, searchableUsername = username.lowercase(Locale.getDefault()), photoUrl = photoUrl)
+        db.collection("users").document(userId).set(user)
+            .addOnSuccessListener {
+                Toast.makeText(this, "注冊成功", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+    }
 }

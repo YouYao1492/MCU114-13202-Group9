@@ -68,7 +68,7 @@ class UserActivity : BaseActivity() {
 
         if (currentUser == null) {
             Log.w("UserActivity", "Not logged in, cannot fetch posts.")
-            Toast.makeText(this, "Please log in to see your posts.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "請登錄后查看", Toast.LENGTH_SHORT).show()
             myAdapter.submitList(emptyList())
             checkEmptyView(false)
             return
@@ -132,7 +132,7 @@ class UserActivity : BaseActivity() {
             triggerUserPhotoUrl = currentUser.photoUrl.toString(),
             type = "like",
             postId = post.id,
-            text = "liked your post"
+            text = "贊了你的貼文"
         )
 
         db.collection("notifications").add(notification)

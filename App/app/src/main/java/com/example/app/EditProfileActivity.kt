@@ -37,7 +37,7 @@ class EditProfileActivity : AppCompatActivity() {
             if (newUsername.isNotEmpty()) {
                 updateUsername(newUsername)
             } else {
-                Toast.makeText(this, "Username cannot be empty.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "用戶名不能爲空", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -45,7 +45,7 @@ class EditProfileActivity : AppCompatActivity() {
     private fun updateUsername(newUsername: String) {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
-            Toast.makeText(this, "You must be logged in to update your profile.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "你必須登錄才能修改用戶名", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -77,7 +77,7 @@ class EditProfileActivity : AppCompatActivity() {
                     }
                     batch.commit()
                         .addOnSuccessListener {
-                            Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "資料更新成功", Toast.LENGTH_SHORT).show()
                             finish()
                         }
                 }

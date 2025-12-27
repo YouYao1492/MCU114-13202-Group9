@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -29,6 +31,13 @@
 
         <service android:name=".MusicService" />
 
+        <receiver
+            android:name=".NetworkChangeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".UserActivity"
@@ -56,6 +65,18 @@
             android:exported="false" />
         <activity
             android:name=".EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ConversationsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".tempActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UserSearchActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

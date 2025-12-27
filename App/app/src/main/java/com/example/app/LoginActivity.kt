@@ -26,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
         emailEditText = findViewById(R.id.activity_login_edittext_account)
         val passwordEditText = findViewById<TextInputEditText>(R.id.activity_login_edittext_password)
         val loginButton = findViewById<Button>(R.id.activity_login_button_confirm)
+        val registerButton = findViewById<Button>(R.id.activity_login_button_register)
         val recentAccountsTextView = findViewById<TextView>(R.id.activity_login_textview_recent_accounts)
 
         loginButton.setOnClickListener {
@@ -37,17 +38,22 @@ class LoginActivity : AppCompatActivity() {
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             saveRecentAccount(email)
-                            Toast.makeText(this, "Login successful.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "登錄成功", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this, HomeActivity::class.java)
                             startActivity(intent)
                             finish()
                         } else {
-                            Toast.makeText(this, "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "驗證失敗: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
             } else {
-                Toast.makeText(this, "Please enter email and password.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "請輸入郵箱和密碼", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        registerButton.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
         }
 
         recentAccountsTextView.setOnClickListener {
@@ -57,9 +63,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun saveRecentAccount(email: String) {
         val sharedPreferences = getSharedPreferences("accounts", Context.MODE_PRIVATE)
-        val recentAccounts = sharedPreferences.getStringSet("recent_accounts", mutableSetOf()) ?: mutableSetOf()
-        recentAccounts.add(email)
-        sharedPreferences.edit().putStringSet("recent_accounts", recentAccounts).apply()
+        val recentAccounts = sharedPreferences.getStringSet("recent_accounts", null) ?: emptySet()
+        val newRecentAccounts = mutableSetOf<String>()
+        newRecentAccounts.addAll(recentAccounts)
+        newRecentAccounts.add(email)
+        sharedPreferences.edit().putStringSet("recent_accounts", newRecentAccounts).apply()
     }
 
     private fun showRecentAccountsMenu() {
@@ -67,7 +75,7 @@ class LoginActivity : AppCompatActivity() {
         val recentAccounts = sharedPreferences.getStringSet("recent_accounts", null)
 
         if (recentAccounts.isNullOrEmpty()) {
-            Toast.makeText(this, "No recent accounts.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "無最近登陸過的賬戶", Toast.LENGTH_SHORT).show()
             return
         }
 
